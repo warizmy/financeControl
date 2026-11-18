@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Keuangan Pribadi & Perencanaan Aset</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              900: '#0F172A',
+              800: '#1E293B',
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes panelEnter {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .tab-panel {
+      animation: panelEnter 0.2s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A] selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- =====================================================================
+       HEADER EKSEKUTIF & NAVIGASI UTAMA
+  ====================================================================== -->
+  <header class="sticky top-0 z-30 bg-[#0F172A] text-white border-b border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Identitas Aplikasi -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1D4ED8] to-[#059669] flex items-center justify-center text-white shadow-sm shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">
+                Manajemen Keuangan Pribadi & Perencanaan Aset
+              </h1>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                Siklus Tanggal 25
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Sistem Kendali Arus Kas, Anggaran Operasional, dan Akumulasi Dana Terencana
+            </p>
+          </div>
+        </div>
+
+        <!-- Tombol Keamanan & Cadangan Data -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onclick="exportBackup()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#1D4ED8] hover:bg-blue-600 text-white transition shadow-xs"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span>Ekspor Cadangan (JSON)</span>
+          </button>
+
+          <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 cursor-pointer transition">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span>Impor Cadangan</span>
+            <input type="file" id="importFileInput" accept=".json,application/json" class="hidden" onchange="handleImportFile(event)" />
+          </label>
+
+          <button
+            type="button"
+            onclick="openResetModal()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-950/70 hover:bg-rose-900/80 text-rose-200 border border-rose-800/70 transition"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            <span>Atur Ulang Data Awal</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 Tab Navigasi Utama -->
+      <nav class="mt-4 pt-3 border-t border-slate-800/90 flex items-center gap-2 overflow-x-auto no-scrollbar" aria-label="Navigasi Modul Utama">
+        <button
+          type="button"
+          id="tab-btn-1"
+          onclick="switchTab(1)"
+          class="tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-[#1D4ED8] text-white shadow-xs"
+        >
+          <span>Ringkasan Eksekutif</span>
+        </button>
+
+        <button
+          type="button"
+          id="tab-btn-2"
+          onclick="switchTab(2)"
+          class="tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white"
+        >
+          <span>Kendali Pengeluaran</span>
+        </button>
+
+        <button
+          type="button"
+          id="tab-btn-3"
+          onclick="switchTab(3)"
+          class="tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white"
+        >
+          <span>Perencanaan Anggaran</span>
+        </button>
+
+        <button
+          type="button"
+          id="tab-btn-4"
+          onclick="switchTab(4)"
+          class="tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white"
+        >
+          <span>Target & Proyeksi</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       KONTEN UTAMA
+  ====================================================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+    <!-- ===================================================================
+         TAB 1: RINGKASAN EKSEKUTIF
+    ==================================================================== -->
+    <section id="tab-panel-1" class="tab-panel space-y-6">
+      <!-- Bilah Konteks Siklus Aktif -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 sm:px-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Periode Siklus Penggajian Aktif</p>
+          <p id="execCycleTitle" class="text-sm sm:text-base font-bold text-[#0F172A] mt-0.5">
+            Siklus 1: 25 November 2026 – 24 Desember 2026
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <label for="execCycleSelect" class="text-xs font-semibold text-[#334155] shrink-0">Pilih Siklus:</label>
+          <select
+            id="execCycleSelect"
+            onchange="handleSelectCycle(this.value)"
+            class="px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+          ></select>
+        </div>
+      </div>
+
+      <!-- 4 Kartu Metrik Utama (KPI) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 1: Pendapatan Tetap Bulanan -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Pendapatan Tetap Bulanan</span>
+            <span class="p-2 rounded-xl bg-slate-100 text-[#0F172A]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75" />
+              </svg>
+            </span>
+          </div>
+          <p id="kpiPendapatan" class="text-xl sm:text-2xl font-extrabold text-[#0F172A] tabular-nums">Rp 6.964.976</p>
+          <p class="text-xs text-[#64748B] mt-1">Gaji bersih diterima setiap tanggal 25</p>
+        </div>
+
+        <!-- KPI 2: Anggaran Hidup & Gaya Hidup -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Anggaran Hidup & Gaya Hidup</span>
+            <span class="p-2 rounded-xl bg-blue-50 text-[#1D4ED8]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+              </svg>
+            </span>
+          </div>
+          <p id="kpiAnggaranHidup" class="text-xl sm:text-2xl font-extrabold text-[#1D4ED8] tabular-nums">Rp 2.900.000</p>
+          <p class="text-xs text-[#64748B] mt-1">Alokasi operasional 4 pos harian</p>
+        </div>
+
+        <!-- KPI 3: Alokasi Tabungan Rutin -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Alokasi Tabungan Rutin</span>
+            <span class="p-2 rounded-xl bg-emerald-50 text-[#059669]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+              </svg>
+            </span>
+          </div>
+          <p id="kpiTabunganRutin" class="text-xl sm:text-2xl font-extrabold text-[#059669] tabular-nums">Rp 3.064.976</p>
+          <p id="kpiTabunganRatioSub" class="text-xs text-[#64748B] mt-1">44,0% dari pendapatan bulanan</p>
+        </div>
+
+        <!-- KPI 4: Sisa Anggaran Siklus Berjalan -->
+        <div id="kpiSisaCard" class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs transition-colors">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Sisa Anggaran Siklus</span>
+            <span id="kpiSisaIcon" class="p-2 rounded-xl bg-emerald-50 text-[#059669]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+          </div>
+          <p id="kpiSisaSiklus" class="text-xl sm:text-2xl font-extrabold text-[#0F172A] tabular-nums">Rp 2.900.000</p>
+          <p id="kpiSisaSiklusSub" class="text-xs text-[#64748B] mt-1">100% anggaran operasional tersedia</p>
+        </div>
+      </div>
+
+      <!-- Panel Indikator Kendali Pengeluaran Harian -->
+      <div class="bg-[#0F172A] text-white rounded-2xl p-6 sm:p-7 border border-slate-800 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <span class="text-xs font-bold uppercase tracking-widest text-slate-400">
+                Indikator Kendali Pengeluaran Harian
+              </span>
+              <span id="dailyStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                TERKENDALI
+              </span>
+            </div>
+
+            <div>
+              <p class="text-xs font-medium text-slate-400">
+                Batas Aman Pengeluaran Harian (Sisa Anggaran ÷ Sisa Hari Menuju Tanggal 25)
+              </p>
+              <p id="dailySafeLimitValue" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white tabular-nums mt-1">
+                Rp 96.667
+              </p>
+            </div>
+
+            <p id="dailyScheduleNote" class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              Perhitungan disesuaikan secara otomatis berdasarkan sisa hari menuju tanggal penggajian berikutnya (tanggal 25).
+            </p>
+          </div>
+
+          <!-- Metrik Pendukung Kendali Harian -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3.5 lg:min-w-[360px]">
+            <div class="bg-slate-800/80 border border-slate-700/70 rounded-xl p-3.5">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Sisa Hari Siklus</p>
+              <p id="dailyRemainingDays" class="text-base sm:text-lg font-bold text-emerald-300 tabular-nums mt-1">30 Hari</p>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700/70 rounded-xl p-3.5">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Rata-Rata Aktual / Hari</p>
+              <p id="dailyActualAverage" class="text-base sm:text-lg font-bold text-white tabular-nums mt-1">Rp 0</p>
+            </div>
+            <div class="col-span-2 sm:col-span-1 lg:col-span-2 bg-slate-800/80 border border-slate-700/70 rounded-xl p-3.5">
+              <div class="flex items-center justify-between text-xs mb-1.5">
+                <span class="text-slate-400">Realisasi Pengeluaran Siklus</span>
+                <span id="dailyUtilizationPct" class="font-bold text-white tabular-nums">0%</span>
+              </div>
+              <div class="w-full h-2.5 bg-slate-700 rounded-full overflow-hidden">
+                <div id="dailyUtilizationBar" class="h-full bg-[#059669] rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grafik Donat SVG Komposisi Gaji & Daftar Periksa Distribusi Tanggal 25 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Grafik Donat SVG Interaktif (6 kolom) -->
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+          <div class="mb-4">
+            <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">Komposisi Alokasi Pendapatan Bulanan</h2>
+            <p class="text-xs text-[#64748B] mt-0.5">
+              Arahkan kursor atau sentuh segmen grafik untuk melihat rincian nominal dan persentase alokasi.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-6 py-2">
+            <!-- SVG Donut Chart -->
+            <div class="relative w-52 h-52 shrink-0 flex items-center justify-center">
+              <svg id="salaryDonutSvg" viewBox="0 0 220 220" class="w-full h-full -rotate-90 overflow-visible"></svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                <span id="donutCenterLabel" class="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+                  Total Gaji
+                </span>
+                <span id="donutCenterValue" class="text-sm sm:text-base font-extrabold text-[#0F172A] tabular-nums mt-0.5">
+                  Rp 6.964.976
+                </span>
+                <span id="donutCenterPct" class="text-xs font-bold text-[#059669] tabular-nums mt-0.5">
+                  100%
+                </span>
+              </div>
+            </div>
+
+            <!-- Legenda Interaktif -->
+            <div id="donutLegendContainer" class="w-full space-y-2.5"></div>
+          </div>
+        </div>
+
+        <!-- Daftar Periksa Distribusi Hari Gajian Tanggal 25 (6 kolom) -->
+        <div class="lg:col-span-6 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">
+                Daftar Periksa Distribusi Hari Gajian (Tanggal 25)
+              </h2>
+              <p class="text-xs text-[#64748B] mt-0.5">
+                Tandai setiap pemindahan dana kewajiban dan tabungan segera setelah gaji diterima.
+              </p>
+            </div>
+            <span id="checklistProgressBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-[#334155] self-start sm:self-auto tabular-nums">
+              0 / 6 Selesai
+            </span>
+          </div>
+
+          <div id="paydayChecklistContainer" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 2: KENDALI PENGELUARAN
+    ==================================================================== -->
+    <section id="tab-panel-2" class="tab-panel hidden space-y-6">
+      <!-- Pemilih Siklus Penggajian & Tombol Tambah Siklus -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-4 sm:px-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#64748B]">Siklus Penggajian Terpilih</p>
+          <p id="expenseCycleSubtitle" class="text-sm sm:text-base font-bold text-[#0F172A] mt-0.5">
+            Siklus 1: 25 November 2026 – 24 Desember 2026
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <select
+            id="expenseCycleSelect"
+            onchange="handleSelectCycle(this.value)"
+            class="px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-semibold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+          ></select>
+
+          <button
+            type="button"
+            onclick="addNewPayCycle()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#0F172A] hover:bg-slate-800 text-white transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Tambah Siklus Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bilah Progres Sisa Anggaran per Kategori (4 Pos) -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">Realisasi & Sisa Anggaran per Kategori</h2>
+            <p class="text-xs text-[#64748B]">
+              Pemantauan batas serapan anggaran untuk 4 pos kebutuhan operasional dan gaya hidup.
+            </p>
+          </div>
+          <button
+            type="button"
+            onclick="switchTab(3)"
+            class="text-xs font-semibold text-[#1D4ED8] hover:underline self-start sm:self-auto"
+          >
+            Sesuaikan Plafon Anggaran &rarr;
+          </button>
+        </div>
+
+        <div id="categoryProgressGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- Formulir Pencatatan Transaksi & Tabel Riwayat -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Formulir Pencatatan Transaksi Baru (5 kolom) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+          <div class="mb-4">
+            <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">Pencatatan Transaksi Pengeluaran</h2>
+            <p class="text-xs text-[#64748B] mt-0.5">
+              Catat setiap realisasi pengeluaran operasional untuk menjaga akurasi batas harian.
+            </p>
+          </div>
+
+          <form id="transactionForm" onsubmit="handleAddTransaction(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="txDate" class="block text-xs font-semibold text-[#334155] mb-1.5">Tanggal Transaksi</label>
+                <input
+                  type="date"
+                  id="txDate"
+                  required
+                  class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-[#0F172A] bg-slate-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                />
+              </div>
+
+              <div>
+                <label for="txCategory" class="block text-xs font-semibold text-[#334155] mb-1.5">Kategori Anggaran</label>
+                <select
+                  id="txCategory"
+                  required
+                  class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-[#0F172A] bg-slate-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                >
+                  <option value="Konsumsi Harian & Minuman">Konsumsi Harian & Minuman</option>
+                  <option value="Bahan Bakar & Transportasi">Bahan Bakar & Transportasi</option>
+                  <option value="Rekreasi & Sosial">Rekreasi & Sosial</option>
+                  <option value="Pakaian & Kebutuhan Pribadi">Pakaian & Kebutuhan Pribadi</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="txAmount" class="block text-xs font-semibold text-[#334155] mb-1.5">Nominal (Rp)</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input
+                    type="text"
+                    inputmode="numeric"
+                    id="txAmount"
+                    placeholder="50.000"
+                    required
+                    oninput="formatCurrencyInput(this)"
+                    class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="txMethod" class="block text-xs font-semibold text-[#334155] mb-1.5">Metode Pembayaran</label>
+                <select
+                  id="txMethod"
+                  required
+                  class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-[#0F172A] bg-slate-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                >
+                  <option value="QRIS">QRIS</option>
+                  <option value="Transfer Bank">Transfer Bank</option>
+                  <option value="Kartu Debit">Kartu Debit</option>
+                  <option value="Tunai">Tunai</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="txNote" class="block text-xs font-semibold text-[#334155] mb-1.5">Keterangan Transaksi</label>
+              <input
+                type="text"
+                id="txNote"
+                placeholder="Contoh: Makan siang dan air mineral"
+                required
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-[#0F172A] bg-slate-50/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full py-3 px-4 rounded-xl bg-[#1D4ED8] hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition flex items-center justify-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <span>Simpan Catatan Pengeluaran</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabel Riwayat Transaksi (7 kolom) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">Riwayat Transaksi Siklus Aktif</h2>
+              <p id="txCountLabel" class="text-xs text-[#64748B]">0 transaksi tercatat</p>
+            </div>
+
+            <button
+              type="button"
+              onclick="exportCycleCSV()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 text-[#059669] border border-emerald-200 hover:bg-emerald-100 transition self-start sm:self-auto"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              <span>Unduh Laporan CSV</span>
+            </button>
+          </div>
+
+          <!-- Bilah Pencarian & Filter Kategori -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="relative">
+              <svg class="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+              <input
+                type="text"
+                id="txSearchInput"
+                oninput="renderExpenseController()"
+                placeholder="Cari keterangan atau metode bayar..."
+                class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+              />
+            </div>
+
+            <select
+              id="txFilterCategory"
+              onchange="renderExpenseController()"
+              class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-[#334155] bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+            >
+              <option value="ALL">Semua Kategori Anggaran</option>
+              <option value="Konsumsi Harian & Minuman">Konsumsi Harian & Minuman</option>
+              <option value="Bahan Bakar & Transportasi">Bahan Bakar & Transportasi</option>
+              <option value="Rekreasi & Sosial">Rekreasi & Sosial</option>
+              <option value="Pakaian & Kebutuhan Pribadi">Pakaian & Kebutuhan Pribadi</option>
+            </select>
+          </div>
+
+          <div id="transactionListContainer" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 3: PERENCANAAN ANGGARAN
+    ==================================================================== -->
+    <section id="tab-panel-3" class="tab-panel hidden space-y-6">
+      <!-- Ringkasan Atas Perencanaan -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-[#0F172A]">Konfigurasi Perencanaan Anggaran Bulanan</h2>
+            <p class="text-xs sm:text-sm text-[#64748B] mt-0.5">
+              Seluruh perubahan nominal di bawah ini secara otomatis memperbarui perhitungan di seluruh modul aplikasi.
+            </p>
+          </div>
+
+          <div class="bg-[#0F172A] text-white px-5 py-3.5 rounded-2xl flex items-center gap-5 shrink-0">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Sisa Bersih Tabungan Rutin</p>
+              <p id="planNetSavingsHeader" class="text-xl sm:text-2xl font-extrabold text-emerald-400 tabular-nums">
+                Rp 3.064.976
+              </p>
+            </div>
+            <div class="h-9 w-px bg-slate-700"></div>
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Rasio Tabungan</p>
+              <p id="planSavingsRatioHeader" class="text-lg sm:text-xl font-bold text-white tabular-nums">44,0%</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilah Proporsi Alokasi Pendapatan -->
+        <div class="mt-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-[#334155] mb-2">
+            <span>Distribusi Pendapatan Tetap (<strong id="planIncomeHeaderDisplay" class="tabular-nums">Rp 6.964.976</strong>)</span>
+            <div class="flex flex-wrap items-center gap-4">
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1D4ED8]"></span>Kewajiban Tetap</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>Hidup & Gaya Hidup</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#059669]"></span>Tabungan Rutin</span>
+            </div>
+          </div>
+          <div class="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex">
+            <div id="planBarFixed" class="bg-[#1D4ED8] h-full transition-all duration-300" style="width: 14.36%"></div>
+            <div id="planBarLiving" class="bg-[#D97706] h-full transition-all duration-300" style="width: 41.64%"></div>
+            <div id="planBarSavings" class="bg-[#059669] h-full transition-all duration-300" style="width: 44.0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Form Pengaturan Anggaran -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Kolom Kiri: Pendapatan Tetap & Kewajiban Tetap -->
+        <div class="space-y-6">
+          <!-- Pendapatan Tetap Bulanan -->
+          <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+            <h3 class="text-base font-bold text-[#0F172A] mb-1">1. Pendapatan Tetap Bulanan</h3>
+            <p class="text-xs text-[#64748B] mb-4">Gaji bersih yang diterima setiap tanggal 25.</p>
+
+            <div>
+              <label for="inputPendapatan" class="block text-xs font-semibold text-[#334155] mb-1.5">
+                Pendapatan Tetap Bulanan (Gaji Bersih)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#64748B]">Rp</span>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  id="inputPendapatan"
+                  oninput="handleBudgetFieldInput(this, 'pendapatan')"
+                  class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-base font-extrabold text-[#0F172A] tabular-nums bg-blue-50/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Kewajiban Keluarga & Tagihan Tetap -->
+          <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-base font-bold text-[#0F172A]">2. Kewajiban Keluarga & Tagihan Tetap</h3>
+                <p class="text-xs text-[#64748B]">Pengeluaran tetap yang dipisahkan pada hari penggajian.</p>
+              </div>
+              <span id="subtotalFixedBadge" class="px-3 py-1 rounded-lg bg-blue-50 text-[#1D4ED8] text-xs font-extrabold tabular-nums">
+                Rp 1.000.000
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputWifi" class="block text-xs font-semibold text-[#334155] mb-1.5">Layanan Internet (Wi-Fi)</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputWifi" oninput="handleBudgetFieldInput(this, 'wifi')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="inputOrtu" class="block text-xs font-semibold text-[#334155] mb-1.5">Dukungan Keuangan Orang Tua</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputOrtu" oninput="handleBudgetFieldInput(this, 'ortu')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="inputListrik" class="block text-xs font-semibold text-[#334155] mb-1.5">Tagihan Listrik</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputListrik" oninput="handleBudgetFieldInput(this, 'listrik')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="inputPaylater" class="block text-xs font-semibold text-[#334155] mb-1.5">Angsuran PayLater</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputPaylater" oninput="handleBudgetFieldInput(this, 'paylater')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Kebutuhan Hidup & Gaya Hidup + Rasio Tabungan -->
+        <div class="space-y-6">
+          <!-- Kebutuhan Hidup & Gaya Hidup -->
+          <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-base font-bold text-[#0F172A]">3. Kebutuhan Hidup & Gaya Hidup</h3>
+                <p class="text-xs text-[#64748B]">Plafon anggaran operasional yang dipantau setiap hari.</p>
+              </div>
+              <span id="subtotalLivingBadge" class="px-3 py-1 rounded-lg bg-amber-50 text-[#D97706] text-xs font-extrabold tabular-nums">
+                Rp 2.900.000
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="inputKonsumsi" class="block text-xs font-semibold text-[#334155] mb-1.5">
+                  Konsumsi Harian & Minuman
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputKonsumsi" oninput="handleBudgetFieldInput(this, 'konsumsi')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+                <p id="hintKonsumsiHarian" class="text-[11px] text-[#64748B] mt-1 tabular-nums">Acuan harian (30 hari): Rp 50.000/hari</p>
+              </div>
+
+              <div>
+                <label for="inputTransport" class="block text-xs font-semibold text-[#334155] mb-1.5">
+                  Bahan Bakar & Transportasi
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputTransport" oninput="handleBudgetFieldInput(this, 'transport')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="inputRekreasi" class="block text-xs font-semibold text-[#334155] mb-1.5">
+                  Rekreasi & Sosial
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputRekreasi" oninput="handleBudgetFieldInput(this, 'rekreasi')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="inputPakaian" class="block text-xs font-semibold text-[#334155] mb-1.5">
+                  Pakaian & Kebutuhan Pribadi
+                </label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B]">Rp</span>
+                  <input type="text" inputmode="numeric" id="inputPakaian" oninput="handleBudgetFieldInput(this, 'pakaian')" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#0F172A] tabular-nums bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pengaturan Rasio Pembagian Tabungan Rutin -->
+          <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-[#0F172A]">4. Rasio Pembagian Tabungan Rutin</h3>
+                <p class="text-xs text-[#64748B]">Atur persentase distribusi sisa bersih bulanan ke dua pos tujuan.</p>
+              </div>
+              <span id="ratioBadgeDisplay" class="px-3 py-1 rounded-lg bg-emerald-50 text-[#059669] text-xs font-extrabold tabular-nums">
+                50% : 50%
+              </span>
+            </div>
+
+            <div>
+              <input
+                type="range"
+                id="nikahRatioSlider"
+                min="0"
+                max="100"
+                step="5"
+                value="50"
+                oninput="handleNikahRatioChange(this.value)"
+                class="w-full accent-[#059669] cursor-pointer"
+              />
+              <div class="flex justify-between text-[11px] font-semibold text-[#64748B] mt-1">
+                <span>0% Pernikahan</span>
+                <span>50% Seimbang</span>
+                <span>100% Pernikahan</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#059669]">
+                  Dana Persiapan Pernikahan (<span id="nikahPctText">50</span>%)
+                </p>
+                <p id="planNikahMonthlyAmount" class="text-base sm:text-lg font-extrabold text-[#0F172A] tabular-nums mt-1">
+                  Rp 1.532.488 / bln
+                </p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8]">
+                  Dana Hiburan & Konsol PS5 (<span id="ps5PctText">50</span>%)
+                </p>
+                <p id="planPs5MonthlyAmount" class="text-base sm:text-lg font-extrabold text-[#0F172A] tabular-nums mt-1">
+                  Rp 1.532.488 / bln
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 4: TARGET & PROYEKSI
+    ==================================================================== -->
+    <section id="tab-panel-4" class="tab-panel hidden space-y-6">
+      <!-- Peta Jalan 5 Target Finansial -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+        <div class="mb-5">
+          <h2 class="text-lg sm:text-xl font-bold text-[#0F172A]">Peta Jalan 5 Target Finansial</h2>
+          <p class="text-xs sm:text-sm text-[#64748B] mt-0.5">
+            Rencana pencapaian aset dan akumulasi dana jangka menengah mulai siklus 25 November 2026 hingga Mei 2027.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Target 1 -->
+          <div class="rounded-2xl border border-[#E2E8F0] p-4 bg-slate-50/60 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-[#1D4ED8]">
+                  Target 1 &bull; Akhir Des 2026
+                </span>
+                <span class="text-xs font-extrabold text-[#0F172A] tabular-nums">Rp 2.200.000</span>
+              </div>
+              <h3 class="text-sm font-bold text-[#0F172A]">Ponsel Operasional Kerja (Samsung A07)</h3>
+              <p class="text-xs text-[#334155] mt-1.5 leading-relaxed">
+                Sumber pendanaan berasal dari pendapatan tambahan November dan Desember 2026 sebesar Rp 1.800.000 serta alokasi tabungan Siklus 2 sebesar Rp 400.000.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold text-[#1D4ED8]">
+              <span>Jadwal Realisasi</span>
+              <span>Siklus 2 (Desember 2026)</span>
+            </div>
+          </div>
+
+          <!-- Target 2 -->
+          <div class="rounded-2xl border border-[#E2E8F0] p-4 bg-slate-50/60 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-[#1D4ED8]">
+                  Target 2 &bull; Akhir Des 2026
+                </span>
+                <span class="text-xs font-extrabold text-[#0F172A] tabular-nums">Rp 500.000</span>
+              </div>
+              <h3 class="text-sm font-bold text-[#0F172A]">Sepatu Kasual (All Black)</h3>
+              <p class="text-xs text-[#334155] mt-1.5 leading-relaxed">
+                Direalisasikan pada akhir Desember 2026 bersamaan dengan pengadaan ponsel operasional kerja tanpa mengganggu anggaran bulanan.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold text-[#1D4ED8]">
+              <span>Jadwal Realisasi</span>
+              <span>Siklus 2 (Desember 2026)</span>
+            </div>
+          </div>
+
+          <!-- Target 3 -->
+          <div class="rounded-2xl border border-[#E2E8F0] p-4 bg-slate-50/60 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-[#D97706]">
+                  Target 3 &bull; Rutin Setiap Siklus
+                </span>
+                <span id="roadmapPakaianBadge" class="text-xs font-extrabold text-[#0F172A] tabular-nums">
+                  Rp 300.000/bulan
+                </span>
+              </div>
+              <h3 class="text-sm font-bold text-[#0F172A]">Anggaran Pakaian & Kebutuhan Pribadi</h3>
+              <p class="text-xs text-[#334155] mt-1.5 leading-relaxed">
+                Dialokasikan secara terukur setiap siklus penggajian untuk menjaga keseimbangan kebutuhan sandang dan pengendalian pengeluaran.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold text-[#D97706]">
+              <span>Status Alokasi</span>
+              <span>Aktif di Pos Anggaran</span>
+            </div>
+          </div>
+
+          <!-- Target 4 -->
+          <div class="rounded-2xl border border-emerald-200 p-4 bg-emerald-50/40 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-[#059669]">
+                  Target 4 &bull; Mei 2027
+                </span>
+                <span id="roadmapNikahTop" class="text-xs font-extrabold text-[#059669] tabular-nums">
+                  Rp 10.459.904
+                </span>
+              </div>
+              <h3 class="text-sm font-bold text-[#0F172A]">Dana Persiapan Pernikahan</h3>
+              <p class="text-xs text-[#334155] mt-1.5 leading-relaxed">
+                Akumulasi berkelanjutan di rekening terpisah untuk menjaga keamanan dana tujuan jangka panjang.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-emerald-200 flex items-center justify-between text-[11px] font-bold text-[#059669]">
+              <span>Proyeksi Siklus 7 (Mei 2027)</span>
+              <span id="roadmapNikahBottom" class="tabular-nums">Rp 10.459.904</span>
+            </div>
+          </div>
+
+          <!-- Target 5 -->
+          <div class="md:col-span-2 rounded-2xl border border-slate-800 p-5 bg-[#0F172A] text-white flex flex-col justify-between">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  Target 5 &bull; Mei 2027
+                </span>
+                <span class="text-xs font-extrabold text-emerald-300 tabular-nums">
+                  Target Kebutuhan: Rp 9.200.000
+                </span>
+              </div>
+              <h3 class="text-base font-bold text-white">Konsol PlayStation 5 & Gim GTA VI</h3>
+              <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                Proyeksi akumulasi dana pada Siklus 7 (Mei 2027) mencapai
+                <strong id="roadmapPs5Inline" class="text-emerald-300 tabular-nums">Rp 10.094.928</strong>,
+                sehingga mencukupi pengadaan unit konsol beserta gim resmi dengan
+                <strong id="roadmapPs5SurplusInline" class="text-white tabular-nums">surplus dana sebesar Rp 894.928</strong>.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400">Status Proyeksi Mei 2027:</span>
+              <span id="roadmapPs5StatusBadge" class="font-bold text-emerald-300 tabular-nums">
+                TERCAPAI (SURPLUS Rp 894.928)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grafik SVG Pertumbuhan Akumulasi Dana -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">
+              Grafik Pertumbuhan Akumulasi Dana Tujuan
+            </h2>
+            <p class="text-xs text-[#64748B]">
+              Perbandingan akumulasi Dana Persiapan Pernikahan dan Dana Konsol PlayStation 5 & Gim GTA VI per siklus.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 text-xs font-semibold">
+            <span class="inline-flex items-center gap-1.5 text-[#059669]">
+              <span class="w-3 h-3 rounded-sm bg-[#059669]"></span>Dana Pernikahan
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[#1D4ED8]">
+              <span class="w-3 h-3 rounded-sm bg-[#1D4ED8]"></span>Dana Konsol PS5 + GTA VI
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[#DC2626]">
+              <span class="w-3 h-0.5 border-t-2 border-dashed border-[#DC2626]"></span>Target PS5 (Rp 9,2 Jt)
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full overflow-x-auto">
+          <svg id="projectionGrowthSvg" viewBox="0 0 860 280" class="w-full min-w-[640px] h-auto"></svg>
+        </div>
+      </div>
+
+      <!-- Tabel Proyeksi Arus Kas & Akumulasi Tabungan -->
+      <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-[#0F172A]">
+              Tabel Proyeksi Arus Kas & Akumulasi Tabungan
+            </h2>
+            <p class="text-xs text-[#64748B] mt-0.5">
+              Kolom <strong class="text-[#1D4ED8]">Pendapatan Tambahan</strong> dan
+              <strong class="text-[#DC2626]">Realisasi Pembelian Aset</strong> dapat diubah langsung pada tabel.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onclick="addProjectionCycle()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#0F172A] hover:bg-slate-800 text-white transition self-start sm:self-auto"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Tambah Siklus Proyeksi</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-[#E2E8F0]">
+          <table class="w-full text-left border-collapse min-w-[880px]">
+            <thead>
+              <tr class="bg-[#0F172A] text-white text-[11px] uppercase tracking-wider">
+                <th class="py-3.5 px-3.5 font-semibold">Siklus & Periode</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right">Tabungan Gaji</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right">Pendapatan Tambahan</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right">Realisasi Pembelian Aset</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right">Setoran Pernikahan</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right">Setoran PS5</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right bg-emerald-950/70">Saldo Pernikahan</th>
+                <th class="py-3.5 px-3.5 font-semibold text-right bg-blue-950/70">Saldo PS5</th>
+              </tr>
+            </thead>
+            <tbody id="projectionTableBody" class="divide-y divide-slate-200 text-xs sm:text-sm tabular-nums"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       FOOTER
+  ====================================================================== -->
+  <footer class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-[#64748B]">
+    Manajemen Keuangan Pribadi & Perencanaan Aset &bull; Seluruh data tersimpan secara lokal di peramban Anda melalui penyimpanan lokal perangkat.
+  </footer>
+
+  <!-- =====================================================================
+       DIALOG KONFIRMASI ATUR ULANG DATA AWAL
+  ====================================================================== -->
+  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-[#E2E8F0] space-y-4">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-[#DC2626] flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-[#0F172A]">Konfirmasi Pengaturan Ulang Data</h3>
+          <p class="text-xs text-[#334155] mt-1 leading-relaxed">
+            Tindakan ini akan mengembalikan seluruh konfigurasi anggaran, daftar periksa, proyeksi tabungan, serta menghapus catatan transaksi ke kondisi awal (25 November 2026). Disarankan mengunduh berkas cadangan JSON terlebih dahulu.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button
+          type="button"
+          onclick="closeResetModal()"
+          class="px-4 py-2 rounded-xl text-xs font-semibold text-[#334155] bg-slate-100 hover:bg-slate-200 transition"
+        >
+          Batalkan
+        </button>
+        <button
+          type="button"
+          onclick="confirmResetDefault()"
+          class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#DC2626] hover:bg-red-700 transition"
+        >
+          Ya, Atur Ulang Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       NOTIFIKASI TOAST
+  ====================================================================== -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- =====================================================================
+       LOGIKA APLIKASI JAVASCRIPT
+  ====================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. KONFIGURASI DATA AWAL (MULAI 25 NOVEMBER 2026)
+    // =========================================================================
+    const STORAGE_KEY = 'wealth_control_cycle25_v1';
+
+    const BULAN_ID = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    const BULAN_SINGKAT_ID = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
+
+    function buildCycleMetadata(cycleNumber) {
+      // Siklus 1 dimulai 25 November 2026 (tahun 2026, bulan index 10)
+      const startMonthTotal = 2026 * 12 + 10 + (cycleNumber - 1);
+      const startYear = Math.floor(startMonthTotal / 12);
+      const startMonthIdx = startMonthTotal % 12;
+
+      const endMonthTotal = startMonthTotal + 1;
+      const endYear = Math.floor(endMonthTotal / 12);
+      const endMonthIdx = endMonthTotal % 12;
+
+      const startDate = `${startYear}-${String(startMonthIdx + 1).padStart(2, '0')}-25`;
+      const endDate = `${endYear}-${String(endMonthIdx + 1).padStart(2, '0')}-24`;
+
+      const shortRange = `25 ${BULAN_SINGKAT_ID[startMonthIdx]} ${startYear} – 24 ${BULAN_SINGKAT_ID[endMonthIdx]} ${endYear}`;
+      const fullRange = `25 ${BULAN_ID[startMonthIdx]} ${startYear} – 24 ${BULAN_ID[endMonthIdx]} ${endYear}`;
+
+      return {
+        id: `cycle_${cycleNumber}`,
+        number: cycleNumber,
+        labelShort: `Siklus ${cycleNumber}: ${shortRange}`,
+        labelFull: `Siklus ${cycleNumber}: ${fullRange}`,
+        monthBadge: `${BULAN_SINGKAT_ID[startMonthIdx]} ${startYear}`,
+        startDate,
+        endDate,
+      };
+    }
+
+    function createInitialProjections() {
+      const defaults = [
+        { bonus: 900000, wishlist: 0, note: 'Pendapatan tambahan tahap 1' },
+        { bonus: 900000, wishlist: 2700000, note: 'Pendapatan tambahan tahap 2 & pengadaan ponsel + sepatu' },
+        { bonus: 0, wishlist: 0, note: 'Akumulasi tabungan rutin' },
+        { bonus: 0, wishlist: 0, note: 'Akumulasi tabungan rutin' },
+        { bonus: 0, wishlist: 0, note: 'Akumulasi tabungan rutin' },
+        { bonus: 0, wishlist: 0, note: 'Akumulasi tabungan rutin' },
+        { bonus: 0, wishlist: 0, note: 'Target dana PS5 + GTA VI & persiapan pernikahan tercapai' },
+      ];
+      return defaults.map((item, idx) => ({
+        cycleNumber: idx + 1,
+        bonus: item.bonus,
+        wishlist: item.wishlist,
+        note: item.note,
+      }));
+    }
+
+    const DEFAULT_STATE = {
+      budget: {
+        pendapatan: 6964976,
+        // Pengeluaran Tetap & Kewajiban (Total: Rp 1.000.000)
+        wifi: 150000,
+        ortu: 400000,
+        listrik: 300000,
+        paylater: 150000,
+        // Kebutuhan Hidup & Gaya Hidup (Total: Rp 2.900.000)
+        konsumsi: 1500000,
+        transport: 400000,
+        rekreasi: 700000,
+        pakaian: 300000,
+        // Rasio Tabungan Rutin (default 50% Pernikahan : 50% Konsol PS5)
+        nikahRatio: 50,
+      },
+      totalCycles: 7,
+      activeCycleNumber: 1,
+      // Daftar periksa distribusi tanggal 25 per siklus: { cycle_1: { wifi: true, ... } }
+      checklists: {},
+      // Riwayat transaksi pengeluaran: { id, cycleNumber, date, category, amount, note, method }
+      transactions: [],
+      projections: createInitialProjections(),
+    };
+
+    let appState = loadState();
+    let lastDeletedTransaction = null;
+
+    // =========================================================================
+    // 2. FUNGSI UTILITAS FORMAT, TANGGAL, PENYIMPANAN & NOTIFIKASI
+    // =========================================================================
+    function cloneDefaultState() {
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return cloneDefaultState();
+        const parsed = JSON.parse(raw);
+        return {
+          budget: { ...DEFAULT_STATE.budget, ...(parsed.budget || {}) },
+          totalCycles: Math.max(7, Number(parsed.totalCycles) || 7),
+          activeCycleNumber: Math.max(1, Number(parsed.activeCycleNumber) || 1),
+          checklists: parsed.checklists && typeof parsed.checklists === 'object' ? parsed.checklists : {},
+          transactions: Array.isArray(parsed.transactions) ? parsed.transactions : [],
+          projections:
+            Array.isArray(parsed.projections) && parsed.projections.length >= 7
+              ? parsed.projections
+              : createInitialProjections(),
+        };
+      } catch (err) {
+        console.error('Gagal membaca penyimpanan lokal:', err);
+        return cloneDefaultState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (err) {
+        console.error('Gagal menyimpan data:', err);
+        showToast('Gagal menyimpan perubahan ke penyimpanan lokal peramban.', 'error');
+      }
+    }
+
+    function formatRupiah(amount) {
+      const val = Math.round(Number(amount) || 0);
+      const isNegative = val < 0;
+      const formatted = Math.abs(val)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return (isNegative ? '-Rp ' : 'Rp ') + formatted;
+    }
+
+    function formatPlainNumber(amount) {
+      const val = Math.max(0, Math.round(Number(amount) || 0));
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function parseNumericInput(str) {
+      if (typeof str === 'number') return str;
+      const digits = String(str || '').replace(/[^\d]/g, '');
+      return digits ? parseInt(digits, 10) : 0;
+    }
+
+    function formatCurrencyInput(inputEl) {
+      const numeric = parseNumericInput(inputEl.value);
+      inputEl.value = numeric > 0 ? formatPlainNumber(numeric) : '';
+    }
+
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDateID(isoDate) {
+      const [y, m, d] = isoDate.split('-');
+      return `${parseInt(d, 10)} ${BULAN_SINGKAT_ID[parseInt(m, 10) - 1] || m} ${y}`;
+    }
+
+    function parseISODateLocal(isoDate) {
+      const [y, m, d] = isoDate.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function diffDaysInclusive(startISO, endISO) {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const start = parseISODateLocal(startISO);
+      const end = parseISODateLocal(endISO);
+      return Math.round((end - start) / msPerDay) + 1;
+    }
+
+    function escapeHTML(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showToast(message, type = 'success', allowUndo = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const toneClass =
+        type === 'error'
+          ? 'bg-rose-950 border-rose-800 text-white'
+          : type === 'warning'
+          ? 'bg-amber-950 border-amber-800 text-white'
+          : 'bg-[#0F172A] border-slate-700 text-white';
+
+      toast.className = `pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl border shadow-lg text-xs sm:text-sm font-medium transition-all duration-200 ${toneClass}`;
+      toast.innerHTML = `
+        <span>${escapeHTML(message)}</span>
+        ${
+          allowUndo
+            ? `<button type="button" onclick="undoDeleteTransaction(this)" class="px-2.5 py-1 rounded-lg bg-[#059669] hover:bg-emerald-500 text-white font-bold text-xs shrink-0">Batalkan Hapus</button>`
+            : ''
+        }
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(6px)';
+        setTimeout(() => toast.remove(), 220);
+      }, allowUndo ? 4500 : 2800);
+    }
+
+    // =========================================================================
+    // 3. NAVIGASI 4 TAB UTAMA
+    // =========================================================================
+    function switchTab(tabIndex) {
+      for (let i = 1; i <= 4; i++) {
+        const panel = document.getElementById(`tab-panel-${i}`);
+        const button = document.getElementById(`tab-btn-${i}`);
+        if (i === tabIndex) {
+          panel.classList.remove('hidden');
+          button.className =
+            'tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-[#1D4ED8] text-white shadow-xs';
+        } else {
+          panel.classList.add('hidden');
+          button.className =
+            'tab-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white';
+        }
+      }
+    }
+
+    // =========================================================================
+    // 4. KALKULASI INTI ANGGARAN & SIKLUS
+    // =========================================================================
+    function getBudgetCalculations() {
+      const b = appState.budget;
+      const totalFixed = b.wifi + b.ortu + b.listrik + b.paylater;
+      const totalLiving = b.konsumsi + b.transport + b.rekreasi + b.pakaian;
+      const totalOutflow = totalFixed + totalLiving;
+      const netSavings = b.pendapatan - totalOutflow;
+
+      const nikahRatio = Math.min(100, Math.max(0, Number(b.nikahRatio) || 50)) / 100;
+      const monthlyNikah = Math.max(0, Math.round(netSavings * nikahRatio));
+      const monthlyPs5 = Math.max(0, netSavings - monthlyNikah);
+
+      return {
+        pendapatan: b.pendapatan,
+        totalFixed,
+        totalLiving,
+        totalOutflow,
+        netSavings,
+        nikahPct: Math.round(nikahRatio * 100),
+        ps5Pct: 100 - Math.round(nikahRatio * 100),
+        monthlyNikah,
+        monthlyPs5,
+      };
+    }
+
+    function getCycleTimeMetrics(cycleMeta) {
+      const todayISO = getTodayISO();
+      const totalCycleDays = Math.max(1, diffDaysInclusive(cycleMeta.startDate, cycleMeta.endDate));
+
+      if (todayISO < cycleMeta.startDate) {
+        // Siklus belum dimulai (misalnya sebelum 25 November 2026)
+        const daysUntilStart = diffDaysInclusive(todayISO, cycleMeta.startDate) - 1;
+        return {
+          status: 'UPCOMING',
+          totalCycleDays,
+          remainingDays: totalCycleDays,
+          elapsedDays: 1,
+          note: `Siklus dimulai dalam ${daysUntilStart} hari (${formatDateID(cycleMeta.startDate)}). Batas harian dihitung untuk ${totalCycleDays} hari penuh.`,
+        };
+      }
+
+      if (todayISO > cycleMeta.endDate) {
+        // Siklus telah selesai
+        return {
+          status: 'COMPLETED',
+          totalCycleDays,
+          remainingDays: 1,
+          elapsedDays: totalCycleDays,
+          note: `Periode siklus ini telah berakhir pada ${formatDateID(cycleMeta.endDate)}.`,
+        };
+      }
+
+      // Sedang berada di dalam siklus berjalan
+      const remainingDays = Math.max(1, diffDaysInclusive(todayISO, cycleMeta.endDate));
+      const elapsedDays = Math.max(1, diffDaysInclusive(cycleMeta.startDate, todayISO));
+      return {
+        status: 'ACTIVE',
+        totalCycleDays,
+        remainingDays,
+        elapsedDays,
+        note: `Tersisa ${remainingDays} hari dari total ${totalCycleDays} hari siklus menuju tanggal penggajian berikutnya (${formatDateID(cycleMeta.endDate)}).`,
+      };
+    }
+
+    function populateCycleSelectors() {
+      const optionsHTML = [];
+      for (let i = 1; i <= appState.totalCycles; i++) {
+        const meta = buildCycleMetadata(i);
+        const selected = i === appState.activeCycleNumber ? 'selected' : '';
+        optionsHTML.push(`<option value="${i}" ${selected}>${escapeHTML(meta.labelShort)}</option>`);
+      }
+      const joined = optionsHTML.join('');
+      document.getElementById('execCycleSelect').innerHTML = joined;
+      document.getElementById('expenseCycleSelect').innerHTML = joined;
+    }
+
+    function handleSelectCycle(cycleNumStr) {
+      appState.activeCycleNumber = Math.max(1, parseInt(cycleNumStr, 10) || 1);
+      saveState();
+      populateCycleSelectors();
+      syncDefaultTransactionDate();
+      renderExecutiveSummary();
+      renderExpenseController();
+    }
+
+    function addNewPayCycle() {
+      appState.totalCycles += 1;
+      appState.activeCycleNumber = appState.totalCycles;
+
+      // Pastikan array proyeksi juga mengikuti jika siklus bertambah melewati proyeksi saat ini
+      while (appState.projections.length < appState.totalCycles) {
+        appState.projections.push({
+          cycleNumber: appState.projections.length + 1,
+          bonus: 0,
+          wishlist: 0,
+          note: 'Akumulasi tabungan berkelanjutan',
+        });
+      }
+
+      saveState();
+      populateCycleSelectors();
+      syncDefaultTransactionDate();
+      renderExecutiveSummary();
+      renderExpenseController();
+      renderProjections();
+      showToast(`Siklus ${appState.totalCycles} berhasil ditambahkan.`);
+    }
+
+    function syncDefaultTransactionDate() {
+      const meta = buildCycleMetadata(appState.activeCycleNumber);
+      const todayISO = getTodayISO();
+      const txDateEl = document.getElementById('txDate');
+      if (todayISO >= meta.startDate && todayISO <= meta.endDate) {
+        txDateEl.value = todayISO;
+      } else {
+        txDateEl.value = meta.startDate;
+      }
+    }
+
+    // =========================================================================
+    // 5. RENDER TAB 1: RINGKASAN EKSEKUTIF
+    // =========================================================================
+    function renderExecutiveSummary() {
+      const calc = getBudgetCalculations();
+      const cycleMeta = buildCycleMetadata(appState.activeCycleNumber);
+      const timeMetrics = getCycleTimeMetrics(cycleMeta);
+
+      document.getElementById('execCycleTitle').textContent = cycleMeta.labelFull;
+
+      const cycleTx = appState.transactions.filter(
+        (t) => Number(t.cycleNumber) === appState.activeCycleNumber
+      );
+      const totalSpent = cycleTx.reduce((acc, t) => acc + t.amount, 0);
+      const remainingBudget = calc.totalLiving - totalSpent;
+      const safeDailyLimit = Math.max(0, Math.floor(remainingBudget / timeMetrics.remainingDays));
+      const actualDailyAvg = Math.round(totalSpent / timeMetrics.elapsedDays);
+      const remainingRatio = calc.totalLiving > 0 ? remainingBudget / calc.totalLiving : 0;
+      const usedPct = calc.totalLiving > 0 ? Math.round((totalSpent / calc.totalLiving) * 100) : 0;
+
+      // Update 4 Kartu KPI
+      document.getElementById('kpiPendapatan').textContent = formatRupiah(calc.pendapatan);
+      document.getElementById('kpiAnggaranHidup').textContent = formatRupiah(calc.totalLiving);
+      document.getElementById('kpiTabunganRutin').textContent = formatRupiah(calc.netSavings);
+
+      const savingsRatioText =
+        calc.pendapatan > 0 ? ((calc.netSavings / calc.pendapatan) * 100).toFixed(1).replace('.', ',') : '0,0';
+      document.getElementById('kpiTabunganRatioSub').textContent = `${savingsRatioText}% dari pendapatan bulanan`;
+
+      document.getElementById('kpiSisaSiklus').textContent = formatRupiah(remainingBudget);
+
+      const kpiSisaCard = document.getElementById('kpiSisaCard');
+      const kpiSisaSiklus = document.getElementById('kpiSisaSiklus');
+      const kpiSisaIcon = document.getElementById('kpiSisaIcon');
+      const kpiSisaSiklusSub = document.getElementById('kpiSisaSiklusSub');
+
+      if (remainingBudget < 0) {
+        kpiSisaCard.className = 'bg-rose-50/70 rounded-2xl border border-rose-200 p-5 shadow-xs transition-colors';
+        kpiSisaSiklus.className = 'text-xl sm:text-2xl font-extrabold text-[#DC2626] tabular-nums';
+        kpiSisaIcon.className = 'p-2 rounded-xl bg-rose-100 text-[#DC2626]';
+        kpiSisaSiklusSub.textContent = `Defisit sebesar ${formatRupiah(Math.abs(remainingBudget))}`;
+      } else if (remainingRatio < 0.2) {
+        kpiSisaCard.className = 'bg-amber-50/70 rounded-2xl border border-amber-200 p-5 shadow-xs transition-colors';
+        kpiSisaSiklus.className = 'text-xl sm:text-2xl font-extrabold text-[#D97706] tabular-nums';
+        kpiSisaIcon.className = 'p-2 rounded-xl bg-amber-100 text-[#D97706]';
+        kpiSisaSiklusSub.textContent = `Tersisa ${Math.max(0, Math.round(remainingRatio * 100))}% dari anggaran siklus`;
+      } else {
+        kpiSisaCard.className = 'bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs transition-colors';
+        kpiSisaSiklus.className = 'text-xl sm:text-2xl font-extrabold text-[#0F172A] tabular-nums';
+        kpiSisaIcon.className = 'p-2 rounded-xl bg-emerald-50 text-[#059669]';
+        kpiSisaSiklusSub.textContent = `Tersisa ${Math.round(remainingRatio * 100)}% dari anggaran siklus`;
+      }
+
+      // Update Panel Indikator Kendali Pengeluaran Harian
+      document.getElementById('dailySafeLimitValue').textContent = formatRupiah(safeDailyLimit);
+      document.getElementById('dailyRemainingDays').textContent = `${timeMetrics.remainingDays} Hari`;
+      document.getElementById('dailyActualAverage').textContent = formatRupiah(actualDailyAvg);
+      document.getElementById('dailyUtilizationPct').textContent = `${usedPct}%`;
+      document.getElementById('dailyScheduleNote').textContent = timeMetrics.note;
+
+      const barEl = document.getElementById('dailyUtilizationBar');
+      const badgeEl = document.getElementById('dailyStatusBadge');
+      barEl.style.width = `${Math.min(100, Math.max(0, usedPct))}%`;
+
+      if (remainingBudget < 0) {
+        barEl.className = 'h-full bg-[#DC2626] rounded-full transition-all duration-300';
+        badgeEl.className =
+          'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        badgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span>MELEBIHI ANGGARAN`;
+      } else if (remainingRatio < 0.2) {
+        barEl.className = 'h-full bg-[#D97706] rounded-full transition-all duration-300';
+        badgeEl.className =
+          'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        badgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span>PERHATIAN: SISA &lt; 20%`;
+      } else {
+        barEl.className = 'h-full bg-[#059669] rounded-full transition-all duration-300';
+        badgeEl.className =
+          'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+        badgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span>TERKENDALI`;
+      }
+
+      // Render Grafik Donat SVG & Daftar Periksa Tanggal 25
+      renderSalaryDonutChart(calc);
+      renderPaydayChecklist(calc, cycleMeta);
+    }
+
+    function renderSalaryDonutChart(calc) {
+      const total = Math.max(1, calc.pendapatan);
+      const segments = [
+        {
+          id: 'fixed',
+          label: 'Kewajiban Tetap & Keluarga',
+          amount: calc.totalFixed,
+          color: '#1D4ED8',
+        },
+        {
+          id: 'living',
+          label: 'Kebutuhan Hidup & Gaya Hidup',
+          amount: calc.totalLiving,
+          color: '#D97706',
+        },
+        {
+          id: 'nikah',
+          label: 'Dana Persiapan Pernikahan',
+          amount: calc.monthlyNikah,
+          color: '#059669',
+        },
+        {
+          id: 'ps5',
+          label: 'Dana Hiburan & Konsol PS5',
+          amount: calc.monthlyPs5,
+          color: '#0F172A',
+        },
+      ];
+
+      const svgEl = document.getElementById('salaryDonutSvg');
+      const radius = 82;
+      const circumference = 2 * Math.PI * radius;
+      let cumulativeFraction = 0;
+
+      const circlesHTML = segments
+        .map((seg) => {
+          const fraction = Math.max(0, seg.amount / total);
+          const dashLength = fraction * circumference;
+          const dashOffset = -cumulativeFraction * circumference;
+          cumulativeFraction += fraction;
+
+          const pctFormatted = (fraction * 100).toFixed(1).replace('.', ',');
+
+          return `
+            <circle
+              cx="110"
+              cy="110"
+              r="${radius}"
+              fill="transparent"
+              stroke="${seg.color}"
+              stroke-width="26"
+              stroke-dasharray="${dashLength} ${circumference}"
+              stroke-dashoffset="${dashOffset}"
+              class="transition-all duration-300 cursor-pointer hover:opacity-85"
+              onmouseenter="highlightDonutCenter('${escapeHTML(seg.label)}', '${formatRupiah(seg.amount)}', '${pctFormatted}%')"
+              onmouseleave="resetDonutCenter('${formatRupiah(calc.pendapatan)}')"
+              onclick="highlightDonutCenter('${escapeHTML(seg.label)}', '${formatRupiah(seg.amount)}', '${pctFormatted}%')"
+            />
+          `;
+        })
+        .join('');
+
+      svgEl.innerHTML = `
+        <circle cx="110" cy="110" r="${radius}" fill="transparent" stroke="#F1F5F9" stroke-width="26" />
+        ${circlesHTML}
+      `;
+
+      resetDonutCenter(formatRupiah(calc.pendapatan));
+
+      const legendContainer = document.getElementById('donutLegendContainer');
+      legendContainer.innerHTML = segments
+        .map((seg) => {
+          const pct = ((seg.amount / total) * 100).toFixed(1).replace('.', ',');
+          return `
+            <div
+              class="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition cursor-pointer"
+              onmouseenter="highlightDonutCenter('${escapeHTML(seg.label)}', '${formatRupiah(seg.amount)}', '${pct}%')"
+              onmouseleave="resetDonutCenter('${formatRupiah(calc.pendapatan)}')"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${seg.color}"></span>
+                <span class="text-xs font-semibold text-[#334155] truncate">${escapeHTML(seg.label)}</span>
+              </div>
+              <div class="text-right shrink-0 tabular-nums">
+                <p class="text-xs font-bold text-[#0F172A]">${formatRupiah(seg.amount)}</p>
+                <p class="text-[11px] font-medium text-[#64748B]">${pct}%</p>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function highlightDonutCenter(label, formattedAmount, pctText) {
+      document.getElementById('donutCenterLabel').textContent = label;
+      document.getElementById('donutCenterValue').textContent = formattedAmount;
+      document.getElementById('donutCenterPct').textContent = pctText;
+    }
+
+    function resetDonutCenter(totalFormatted) {
+      document.getElementById('donutCenterLabel').textContent = 'Total Pendapatan';
+      document.getElementById('donutCenterValue').textContent = totalFormatted;
+      document.getElementById('donutCenterPct').textContent = '100%';
+    }
+
+    function renderPaydayChecklist(calc, cycleMeta) {
+      const b = appState.budget;
+      const stateForCycle = appState.checklists[cycleMeta.id] || {};
+
+      const items = [
+        { key: 'wifi', title: 'Transfer Layanan Internet (Wi-Fi)', amount: b.wifi, tag: 'Kewajiban Tetap' },
+        { key: 'ortu', title: 'Transfer Dukungan Keuangan Orang Tua', amount: b.ortu, tag: 'Kewajiban Tetap' },
+        { key: 'listrik', title: 'Pembayaran Tagihan Listrik', amount: b.listrik, tag: 'Kewajiban Tetap' },
+        { key: 'paylater', title: 'Pembayaran Angsuran PayLater', amount: b.paylater, tag: 'Kewajiban Tetap' },
+        { key: 'nikah', title: 'Setoran Dana Persiapan Pernikahan (Rekening Terpisah)', amount: calc.monthlyNikah, tag: 'Tabungan Tujuan' },
+        { key: 'ps5', title: 'Setoran Dana Hiburan & Konsol PS5 + GTA VI', amount: calc.monthlyPs5, tag: 'Tabungan Tujuan' },
+      ];
+
+      const completedCount = items.filter((it) => Boolean(stateForCycle[it.key])).length;
+      document.getElementById('checklistProgressBadge').textContent = `${completedCount} / ${items.length} Selesai`;
+
+      const container = document.getElementById('paydayChecklistContainer');
+      container.innerHTML = items
+        .map((it) => {
+          const checked = Boolean(stateForCycle[it.key]);
+          const rowClass = checked
+            ? 'bg-emerald-50/60 border-emerald-200'
+            : 'bg-slate-50/60 border-slate-200 hover:bg-slate-50';
+          const textClass = checked ? 'line-through text-[#64748B]' : 'text-[#0F172A]';
+
+          return `
+            <label class="flex items-center justify-between gap-3 p-3 rounded-xl border cursor-pointer transition ${rowClass}">
+              <div class="flex items-center gap-3 min-w-0">
+                <input
+                  type="checkbox"
+                  ${checked ? 'checked' : ''}
+                  onchange="toggleChecklistItem('${cycleMeta.id}', '${it.key}', this.checked)"
+                  class="w-4 h-4 rounded border-slate-300 text-[#059669] focus:ring-[#059669] shrink-0"
+                />
+                <div class="min-w-0">
+                  <p class="text-xs sm:text-sm font-semibold truncate ${textClass}">${escapeHTML(it.title)}</p>
+                  <p class="text-[11px] text-[#64748B]">${escapeHTML(it.tag)}</p>
+                </div>
+              </div>
+              <span class="text-xs sm:text-sm font-extrabold text-[#0F172A] tabular-nums shrink-0">
+                ${formatRupiah(it.amount)}
+              </span>
+            </label>
+          `;
+        })
+        .join('');
+    }
+
+    function toggleChecklistItem(cycleId, itemKey, isChecked) {
+      if (!appState.checklists[cycleId]) {
+        appState.checklists[cycleId] = {};
+      }
+      appState.checklists[cycleId][itemKey] = isChecked;
+      saveState();
+      renderExecutiveSummary();
+    }
+
+    // =========================================================================
+    // 6. RENDER TAB 2: KENDALI PENGELUARAN
+    // =========================================================================
+    function handleAddTransaction(event) {
+      event.preventDefault();
+      const dateVal = document.getElementById('txDate').value;
+      const categoryVal = document.getElementById('txCategory').value;
+      const amountVal = parseNumericInput(document.getElementById('txAmount').value);
+      const methodVal = document.getElementById('txMethod').value;
+      const noteVal = document.getElementById('txNote').value.trim();
+
+      if (!dateVal || amountVal <= 0 || !noteVal) {
+        showToast('Mohon lengkapi tanggal, nominal lebih dari Rp 0, dan keterangan transaksi.', 'warning');
+        return;
+      }
+
+      // Deteksi otomatis apakah tanggal masuk ke siklus tertentu yang terdaftar
+      let targetCycle = appState.activeCycleNumber;
+      for (let i = 1; i <= appState.totalCycles; i++) {
+        const meta = buildCycleMetadata(i);
+        if (dateVal >= meta.startDate && dateVal <= meta.endDate) {
+          targetCycle = i;
+          break;
+        }
+      }
+
+      const tx = {
+        id: 'tx_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        cycleNumber: targetCycle,
+        date: dateVal,
+        category: categoryVal,
+        amount: amountVal,
+        note: noteVal,
+        method: methodVal,
+      };
+
+      appState.transactions.unshift(tx);
+      if (targetCycle !== appState.activeCycleNumber) {
+        appState.activeCycleNumber = targetCycle;
+        populateCycleSelectors();
+      }
+
+      saveState();
+      document.getElementById('txAmount').value = '';
+      document.getElementById('txNote').value = '';
+
+      renderExecutiveSummary();
+      renderExpenseController();
+      showToast(`Transaksi berhasil dicatat: ${noteVal} (${formatRupiah(amountVal)}).`);
+    }
+
+    function deleteTransaction(txId) {
+      const idx = appState.transactions.findIndex((t) => t.id === txId);
+      if (idx === -1) return;
+      lastDeletedTransaction = { item: appState.transactions[idx], index: idx };
+      appState.transactions.splice(idx, 1);
+      saveState();
+
+      renderExecutiveSummary();
+      renderExpenseController();
+      showToast('Catatan transaksi telah dihapus.', 'warning', true);
+    }
+
+    function undoDeleteTransaction(buttonEl) {
+      if (!lastDeletedTransaction) return;
+      appState.transactions.splice(lastDeletedTransaction.index, 0, lastDeletedTransaction.item);
+      lastDeletedTransaction = null;
+      saveState();
+
+      renderExecutiveSummary();
+      renderExpenseController();
+      if (buttonEl && buttonEl.parentElement) buttonEl.parentElement.remove();
+      showToast('Catatan transaksi berhasil dipulihkan.');
+    }
+
+    function renderExpenseController() {
+      const cycleMeta = buildCycleMetadata(appState.activeCycleNumber);
+      document.getElementById('expenseCycleSubtitle').textContent = cycleMeta.labelFull;
+
+      const cycleTx = appState.transactions.filter(
+        (t) => Number(t.cycleNumber) === appState.activeCycleNumber
+      );
+
+      // Render 4 Bilah Progres Kategori
+      const b = appState.budget;
+      const categories = [
+        { name: 'Konsumsi Harian & Minuman', limit: b.konsumsi, refText: `Acuan Rp ${formatPlainNumber(Math.round(b.konsumsi / 30))}/hari` },
+        { name: 'Bahan Bakar & Transportasi', limit: b.transport, refText: 'Operasional mobilitas' },
+        { name: 'Rekreasi & Sosial', limit: b.rekreasi, refText: 'Alokasi interaksi sosial' },
+        { name: 'Pakaian & Kebutuhan Pribadi', limit: b.pakaian, refText: 'Alokasi kebutuhan pribadi' },
+      ];
+
+      const progressGrid = document.getElementById('categoryProgressGrid');
+      progressGrid.innerHTML = categories
+        .map((cat) => {
+          const spent = cycleTx
+            .filter((t) => t.category === cat.name)
+            .reduce((sum, t) => sum + t.amount, 0);
+          const rem = cat.limit - spent;
+          const pct = cat.limit > 0 ? Math.round((spent / cat.limit) * 100) : spent > 0 ? 100 : 0;
+
+          let barColor = 'bg-[#059669]';
+          let badgeStyle = 'bg-emerald-50 text-[#059669]';
+          let remStyle = 'text-[#334155]';
+
+          if (pct > 100) {
+            barColor = 'bg-[#DC2626]';
+            badgeStyle = 'bg-rose-50 text-[#DC2626]';
+            remStyle = 'text-[#DC2626] font-bold';
+          } else if (pct > 80) {
+            barColor = 'bg-[#D97706]';
+            badgeStyle = 'bg-amber-50 text-[#D97706]';
+            remStyle = 'text-[#D97706] font-semibold';
+          }
+
+          return `
+            <div class="p-4 rounded-xl border border-[#E2E8F0] bg-slate-50/50 space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="text-sm font-bold text-[#0F172A]">${escapeHTML(cat.name)}</p>
+                  <p class="text-[11px] text-[#64748B]">Plafon: ${formatRupiah(cat.limit)} &bull; ${escapeHTML(cat.refText)}</p>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold tabular-nums ${badgeStyle}">${pct}%</span>
+              </div>
+
+              <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="${barColor} h-full rounded-full transition-all duration-300" style="width: ${Math.min(100, pct)}%"></div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs tabular-nums">
+                <span class="text-[#64748B]">Terpakai: <strong class="text-[#0F172A]">${formatRupiah(spent)}</strong></span>
+                <span class="${remStyle}">
+                  ${rem >= 0 ? 'Sisa Dana: ' + formatRupiah(rem) : 'Defisit: ' + formatRupiah(Math.abs(rem))}
+                </span>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      // Filter & Pencarian Riwayat Transaksi
+      const searchQuery = (document.getElementById('txSearchInput').value || '').trim().toLowerCase();
+      const filterCategory = document.getElementById('txFilterCategory').value;
+
+      const filteredTx = cycleTx
+        .filter((t) => filterCategory === 'ALL' || t.category === filterCategory)
+        .filter(
+          (t) =>
+            !searchQuery ||
+            t.note.toLowerCase().includes(searchQuery) ||
+            t.method.toLowerCase().includes(searchQuery) ||
+            t.category.toLowerCase().includes(searchQuery)
+        )
+        .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
+      document.getElementById('txCountLabel').textContent = `${filteredTx.length} transaksi ditampilkan pada ${cycleMeta.labelShort}`;
+
+      const container = document.getElementById('transactionListContainer');
+      if (filteredTx.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+            <p class="text-sm font-semibold text-[#334155]">Belum ada transaksi pengeluaran yang tercatat</p>
+            <p class="text-xs text-[#64748B] mt-1">Gunakan formulir pencatatan di samping untuk menambahkan transaksi baru.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 text-[11px] uppercase tracking-wider text-[#64748B]">
+              <th class="py-2.5 px-2 font-semibold">Tanggal & Keterangan</th>
+              <th class="py-2.5 px-2 font-semibold">Kategori</th>
+              <th class="py-2.5 px-2 font-semibold text-right">Nominal</th>
+              <th class="py-2.5 px-2 font-semibold text-right">Tindakan</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+            ${filteredTx
+              .map(
+                (tx) => `
+              <tr class="hover:bg-slate-50 transition">
+                <td class="py-3 px-2">
+                  <p class="font-semibold text-[#0F172A]">${escapeHTML(tx.note)}</p>
+                  <p class="text-[11px] text-[#64748B] mt-0.5">
+                    ${formatDateID(tx.date)} &bull;
+                    <span class="inline-block px-1.5 py-0.5 rounded bg-slate-100 text-[#334155] font-medium">${escapeHTML(tx.method)}</span>
+                  </p>
+                </td>
+                <td class="py-3 px-2">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-[#334155] whitespace-nowrap">
+                    ${escapeHTML(tx.category)}
+                  </span>
+                </td>
+                <td class="py-3 px-2 text-right font-bold text-[#0F172A] tabular-nums whitespace-nowrap">
+                  ${formatRupiah(tx.amount)}
+                </td>
+                <td class="py-3 px-2 text-right">
+                  <button
+                    type="button"
+                    onclick="deleteTransaction('${tx.id}')"
+                    class="p-1.5 rounded-lg text-slate-400 hover:text-[#DC2626] hover:bg-rose-50 transition"
+                    title="Hapus transaksi"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function exportCycleCSV() {
+      const cycleMeta = buildCycleMetadata(appState.activeCycleNumber);
+      const cycleTx = appState.transactions
+        .filter((t) => Number(t.cycleNumber) === appState.activeCycleNumber)
+        .sort((a, b) => (a.date > b.date ? 1 : -1));
+
+      if (cycleTx.length === 0) {
+        showToast('Tidak terdapat transaksi pada siklus ini untuk diunduh.', 'warning');
+        return;
+      }
+
+      const headers = ['Siklus', 'Tanggal', 'Kategori Anggaran', 'Keterangan Transaksi', 'Metode Pembayaran', 'Nominal (Rp)'];
+      const rows = cycleTx.map((t) => [
+        `"${cycleMeta.labelShort}"`,
+        `"${t.date}"`,
+        `"${t.category.replace(/"/g, '""')}"`,
+        `"${t.note.replace(/"/g, '""')}"`,
+        `"${t.method}"`,
+        t.amount,
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `laporan-pengeluaran-siklus-${appState.activeCycleNumber}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast('Laporan transaksi CSV berhasil diunduh.');
+    }
+
+    // =========================================================================
+    // 7. RENDER TAB 3: PERENCANAAN ANGGARAN
+    // =========================================================================
+    function syncBudgetInputsFromState() {
+      const b = appState.budget;
+      document.getElementById('inputPendapatan').value = formatPlainNumber(b.pendapatan);
+      document.getElementById('inputWifi').value = formatPlainNumber(b.wifi);
+      document.getElementById('inputOrtu').value = formatPlainNumber(b.ortu);
+      document.getElementById('inputListrik').value = formatPlainNumber(b.listrik);
+      document.getElementById('inputPaylater').value = formatPlainNumber(b.paylater);
+      document.getElementById('inputKonsumsi').value = formatPlainNumber(b.konsumsi);
+      document.getElementById('inputTransport').value = formatPlainNumber(b.transport);
+      document.getElementById('inputRekreasi').value = formatPlainNumber(b.rekreasi);
+      document.getElementById('inputPakaian').value = formatPlainNumber(b.pakaian);
+      document.getElementById('nikahRatioSlider').value = b.nikahRatio;
+    }
+
+    function handleBudgetFieldInput(inputEl, fieldKey) {
+      const val = parseNumericInput(inputEl.value);
+      inputEl.value = val > 0 ? formatPlainNumber(val) : '0';
+      appState.budget[fieldKey] = val;
+      saveState();
+
+      renderBudgetPlanner();
+      renderExecutiveSummary();
+      renderExpenseController();
+      renderProjections();
+    }
+
+    function handleNikahRatioChange(ratioVal) {
+      appState.budget.nikahRatio = Math.min(100, Math.max(0, parseInt(ratioVal, 10) || 0));
+      saveState();
+
+      renderBudgetPlanner();
+      renderExecutiveSummary();
+      renderProjections();
+    }
+
+    function renderBudgetPlanner() {
+      const calc = getBudgetCalculations();
+
+      document.getElementById('planIncomeHeaderDisplay').textContent = formatRupiah(calc.pendapatan);
+      document.getElementById('planNetSavingsHeader').textContent = formatRupiah(calc.netSavings);
+
+      const ratioFormatted =
+        calc.pendapatan > 0 ? ((calc.netSavings / calc.pendapatan) * 100).toFixed(1).replace('.', ',') : '0,0';
+      document.getElementById('planSavingsRatioHeader').textContent = `${ratioFormatted}%`;
+
+      document.getElementById('subtotalFixedBadge').textContent = formatRupiah(calc.totalFixed);
+      document.getElementById('subtotalLivingBadge').textContent = formatRupiah(calc.totalLiving);
+
+      const dailyKonsumsiRef = Math.round(appState.budget.konsumsi / 30);
+      document.getElementById('hintKonsumsiHarian').textContent = `Acuan harian (30 hari): ${formatRupiah(dailyKonsumsiRef)}/hari`;
+
+      document.getElementById('ratioBadgeDisplay').textContent = `${calc.nikahPct}% : ${calc.ps5Pct}%`;
+      document.getElementById('nikahPctText').textContent = calc.nikahPct;
+      document.getElementById('ps5PctText').textContent = calc.ps5Pct;
+      document.getElementById('planNikahMonthlyAmount').textContent = `${formatRupiah(calc.monthlyNikah)} / bulan`;
+      document.getElementById('planPs5MonthlyAmount').textContent = `${formatRupiah(calc.monthlyPs5)} / bulan`;
+
+      const denom = Math.max(1, calc.pendapatan);
+      const pctFixed = Math.min(100, Math.max(0, (calc.totalFixed / denom) * 100));
+      const pctLiving = Math.min(100 - pctFixed, Math.max(0, (calc.totalLiving / denom) * 100));
+      const pctSavings = Math.max(0, 100 - pctFixed - pctLiving);
+
+      document.getElementById('planBarFixed').style.width = `${pctFixed}%`;
+      document.getElementById('planBarLiving').style.width = `${pctLiving}%`;
+      document.getElementById('planBarSavings').style.width = `${pctSavings}%`;
+    }
+
+    // =========================================================================
+    // 8. RENDER TAB 4: TARGET & PROYEKSI + GRAFIK SVG
+    // =========================================================================
+    function handleProjectionCellEdit(idx, field, inputEl) {
+      const val = parseNumericInput(inputEl.value);
+      inputEl.value = val > 0 ? formatPlainNumber(val) : '0';
+      appState.projections[idx][field] = val;
+      saveState();
+      renderProjections();
+    }
+
+    function addProjectionCycle() {
+      const nextNum = appState.projections.length + 1;
+      appState.projections.push({
+        cycleNumber: nextNum,
+        bonus: 0,
+        wishlist: 0,
+        note: 'Akumulasi tabungan berkelanjutan',
+      });
+      if (appState.totalCycles < nextNum) {
+        appState.totalCycles = nextNum;
+        populateCycleSelectors();
+      }
+      saveState();
+      renderProjections();
+      showToast(`Siklus ${nextNum} berhasil ditambahkan ke tabel proyeksi.`);
+    }
+
+    function renderProjections() {
+      const calc = getBudgetCalculations();
+      const baseSavings = calc.netSavings;
+      const nikahRatio = calc.nikahPct / 100;
+      const baseNikah = Math.round(baseSavings * nikahRatio);
+      const basePs5 = baseSavings - baseNikah;
+
+      document.getElementById('roadmapPakaianBadge').textContent = `${formatRupiah(appState.budget.pakaian)}/bulan`;
+
+      let cumulativeNikah = 0;
+      let cumulativePs5 = 0;
+      const chartPoints = [];
+
+      let sik7Nikah = 0;
+      let sik7Ps5 = 0;
+
+      const rowsHTML = appState.projections
+        .map((row, idx) => {
+          const meta = buildCycleMetadata(row.cycleNumber);
+          const rawPs5Pool = basePs5 + row.bonus - row.wishlist;
+
+          let depositNikah = baseNikah;
+          let depositPs5 = 0;
+
+          if (rawPs5Pool >= 0) {
+            depositPs5 = rawPs5Pool;
+          } else {
+            depositPs5 = 0;
+            depositNikah = baseNikah + rawPs5Pool;
+          }
+
+          cumulativeNikah += depositNikah;
+          cumulativePs5 += depositPs5;
+
+          if (row.cycleNumber === 7) {
+            sik7Nikah = cumulativeNikah;
+            sik7Ps5 = cumulativePs5;
+          }
+
+          chartPoints.push({
+            label: `Siklus ${row.cycleNumber}`,
+            monthBadge: meta.monthBadge,
+            nikah: cumulativeNikah,
+            ps5: cumulativePs5,
+          });
+
+          const isMilestone7 = row.cycleNumber === 7;
+          const rowHighlight = isMilestone7 ? 'bg-emerald-50/60 font-semibold' : 'hover:bg-slate-50';
+
+          return `
+            <tr class="${rowHighlight}">
+              <td class="py-3 px-3.5">
+                <p class="font-bold text-[#0F172A]">${escapeHTML(meta.labelShort)}</p>
+                <p class="text-[11px] text-[#64748B]">${escapeHTML(row.note)}</p>
+              </td>
+              <td class="py-3 px-3.5 text-right font-medium text-[#334155] whitespace-nowrap">
+                ${formatRupiah(baseSavings)}
+              </td>
+              <td class="py-3 px-3.5 text-right">
+                <div class="inline-flex items-center justify-end">
+                  <span class="text-[11px] font-bold text-[#1D4ED8] mr-1">+Rp</span>
+                  <input
+                    type="text"
+                    inputmode="numeric"
+                    value="${formatPlainNumber(row.bonus)}"
+                    oninput="handleProjectionCellEdit(${idx}, 'bonus', this)"
+                    class="w-24 text-right px-2 py-1 rounded-lg border border-blue-200 bg-blue-50/40 text-xs font-bold text-[#1D4ED8] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
+                  />
+                </div>
+              </td>
+              <td class="py-3 px-3.5 text-right">
+                <div class="inline-flex items-center justify-end">
+                  <span class="text-[11px] font-bold text-[#DC2626] mr-1">-Rp</span>
+                  <input
+                    type="text"
+                    inputmode="numeric"
+                    value="${formatPlainNumber(row.wishlist)}"
+                    oninput="handleProjectionCellEdit(${idx}, 'wishlist', this)"
+                    class="w-24 text-right px-2 py-1 rounded-lg border border-rose-200 bg-rose-50/40 text-xs font-bold text-[#DC2626] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+                  />
+                </div>
+              </td>
+              <td class="py-3 px-3.5 text-right font-semibold text-[#059669] whitespace-nowrap">
+                ${formatRupiah(depositNikah)}
+              </td>
+              <td class="py-3 px-3.5 text-right font-semibold text-[#1D4ED8] whitespace-nowrap">
+                ${formatRupiah(depositPs5)}
+              </td>
+              <td class="py-3 px-3.5 text-right font-extrabold text-emerald-900 bg-emerald-50/70 whitespace-nowrap">
+                ${formatRupiah(cumulativeNikah)}
+              </td>
+              <td class="py-3 px-3.5 text-right font-extrabold text-blue-950 bg-blue-50/70 whitespace-nowrap">
+                ${formatRupiah(cumulativePs5)}
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      document.getElementById('projectionTableBody').innerHTML = rowsHTML;
+
+      // Perbarui Peta Jalan Target 4 & 5 berdasarkan Siklus 7 (Mei 2027)
+      const refNikah = sik7Nikah || cumulativeNikah;
+      const refPs5 = sik7Ps5 || cumulativePs5;
+      const ps5TargetPrice = 9200000;
+      const surplus = refPs5 - ps5TargetPrice;
+
+      document.getElementById('roadmapNikahTop').textContent = formatRupiah(refNikah);
+      document.getElementById('roadmapNikahBottom').textContent = formatRupiah(refNikah);
+      document.getElementById('roadmapPs5Inline').textContent = formatRupiah(refPs5);
+
+      if (surplus >= 0) {
+        document.getElementById('roadmapPs5SurplusInline').textContent = `surplus dana sebesar ${formatRupiah(surplus)}`;
+        document.getElementById('roadmapPs5StatusBadge').textContent = `TERCAPAI (SURPLUS ${formatRupiah(surplus)})`;
+        document.getElementById('roadmapPs5StatusBadge').className = 'font-bold text-emerald-300 tabular-nums';
+      } else {
+        document.getElementById('roadmapPs5SurplusInline').textContent = `selisih kekurangan sebesar ${formatRupiah(Math.abs(surplus))}`;
+        document.getElementById('roadmapPs5StatusBadge').textContent = `KURANG ${formatRupiah(Math.abs(surplus))}`;
+        document.getElementById('roadmapPs5StatusBadge').className = 'font-bold text-amber-300 tabular-nums';
+      }
+
+      renderProjectionGrowthSVG(chartPoints, ps5TargetPrice);
+    }
+
+    function renderProjectionGrowthSVG(points, targetLineVal) {
+      const svg = document.getElementById('projectionGrowthSvg');
+      const width = 860;
+      const height = 280;
+      const padLeft = 86;
+      const padRight = 28;
+      const padTop = 24;
+      const padBottom = 46;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      const maxDataVal = Math.max(
+        targetLineVal * 1.15,
+        ...points.map((p) => Math.max(p.nikah, p.ps5))
+      );
+      const yMax = Math.ceil(maxDataVal / 2000000) * 2000000;
+
+      const getY = (val) => padTop + plotH - (Math.max(0, val) / yMax) * plotH;
+      const stepX = points.length > 1 ? plotW / (points.length - 1) : plotW / 2;
+      const getX = (idx) => (points.length > 1 ? padLeft + idx * stepX : padLeft + plotW / 2);
+
+      // Garis grid horizontal & label sumbu Y
+      const gridSteps = 5;
+      let gridHTML = '';
+      for (let i = 0; i <= gridSteps; i++) {
+        const val = (yMax / gridSteps) * i;
+        const y = getY(val);
+        const jutaLabel = `Rp ${(val / 1000000).toFixed(1).replace('.', ',')} Jt`;
+        gridHTML += `
+          <line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}" stroke="#E2E8F0" stroke-width="1" />
+          <text x="${padLeft - 10}" y="${y + 4}" text-anchor="end" fill="#64748B" font-size="11" font-weight="600">${jutaLabel}</text>
+        `;
+      }
+
+      // Garis target PS5 Rp 9.200.000
+      const targetY = getY(targetLineVal);
+      const targetLineHTML = `
+        <line x1="${padLeft}" y1="${targetY}" x2="${width - padRight}" y2="${targetY}" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="6 4" />
+        <text x="${width - padRight}" y="${targetY - 6}" text-anchor="end" fill="#DC2626" font-size="10" font-weight="700">
+          Target PS5 + GTA VI (Rp 9,2 Jt)
+        </text>
+      `;
+
+      // Kurva garis & titik data
+      const nikahPath = points
+        .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(p.nikah)}`)
+        .join(' ');
+      const ps5Path = points
+        .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(p.ps5)}`)
+        .join(' ');
+
+      const nodesHTML = points
+        .map((p, idx) => {
+          const cx = getX(idx);
+          const cyNikah = getY(p.nikah);
+          const cyPs5 = getY(p.ps5);
+          return `
+            <g>
+              <line x1="${cx}" y1="${padTop}" x2="${cx}" y2="${padTop + plotH}" stroke="#F1F5F9" stroke-width="1" />
+              <circle cx="${cx}" cy="${cyNikah}" r="4.5" fill="#059669" stroke="#FFFFFF" stroke-width="2">
+                <title>${p.label} (${p.monthBadge}) — Dana Pernikahan: ${formatRupiah(p.nikah)}</title>
+              </circle>
+              <circle cx="${cx}" cy="${cyPs5}" r="4.5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2">
+                <title>${p.label} (${p.monthBadge}) — Dana PS5: ${formatRupiah(p.ps5)}</title>
+              </circle>
+              <text x="${cx}" y="${height - 22}" text-anchor="middle" fill="#0F172A" font-size="11" font-weight="700">${p.label}</text>
+              <text x="${cx}" y="${height - 8}" text-anchor="middle" fill="#64748B" font-size="10">${p.monthBadge}</text>
+            </g>
+          `;
+        })
+        .join('');
+
+      svg.innerHTML = `
+        ${gridHTML}
+        ${targetLineHTML}
+        <path d="${nikahPath}" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="${ps5Path}" fill="none" stroke="#1D4ED8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        ${nodesHTML}
+      `;
+    }
+
+    // =========================================================================
+    // 9. EKSPOR CADANGAN, IMPOR CADANGAN & PENGATURAN ULANG DATA
+    // =========================================================================
+    function exportBackup() {
+      try {
+        const envelope = {
+          application: 'Manajemen Keuangan Pribadi & Perencanaan Aset',
+          exportedAt: new Date().toISOString(),
+          payload: appState,
+        };
+        const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `cadangan-keuangan-siklus25-${getTodayISO()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast('Berkas cadangan JSON berhasil diunduh.');
+      } catch (err) {
+        console.error(err);
+        showToast('Terjadi kesalahan saat membuat berkas cadangan.', 'error');
+      }
+    }
+
+    function handleImportFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const imported = parsed.payload ? parsed.payload : parsed;
+
+          if (!imported.budget || typeof imported.budget.pendapatan !== 'number') {
+            throw new Error('Struktur berkas cadangan tidak sesuai.');
+          }
+
+          appState = {
+            budget: { ...DEFAULT_STATE.budget, ...imported.budget },
+            totalCycles: Math.max(7, Number(imported.totalCycles) || 7),
+            activeCycleNumber: Math.max(1, Number(imported.activeCycleNumber) || 1),
+            checklists: imported.checklists && typeof imported.checklists === 'object' ? imported.checklists : {},
+            transactions: Array.isArray(imported.transactions) ? imported.transactions : [],
+            projections:
+              Array.isArray(imported.projections) && imported.projections.length >= 7
+                ? imported.projections
+                : createInitialProjections(),
+          };
+
+          saveState();
+          initializeApplication();
+          showToast('Data cadangan berhasil dipulihkan ke aplikasi.');
+        } catch (err) {
+          console.error(err);
+          showToast('Berkas JSON tidak valid atau tidak dapat dibaca.', 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmResetDefault() {
+      appState = cloneDefaultState();
+      saveState();
+      closeResetModal();
+      initializeApplication();
+      showToast('Seluruh data telah dikembalikan ke pengaturan awal.');
+    }
+
+    // =========================================================================
+    // 10. INISIALISASI APLIKASI
+    // =========================================================================
+    function initializeApplication() {
+      populateCycleSelectors();
+      syncDefaultTransactionDate();
+      syncBudgetInputsFromState();
+
+      renderExecutiveSummary();
+      renderExpenseController();
+      renderBudgetPlanner();
+      renderProjections();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initializeApplication();
+    });
+  </script>
+</body>
+</html>
